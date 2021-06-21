@@ -7,6 +7,9 @@ dotenv.config();
 const client = new Discord.Client({ partials: ['MESSAGE'] });
 const pgClient = new PG.Client({
 	connectionString: process.env.DATABASE_URL,
+	ssl: {
+		rejectUnauthorized: false,
+	},
 });
 
 client.login(process.env.TOKEN);
