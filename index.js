@@ -13,6 +13,7 @@ const pgClient = new PG.Client({
 });
 
 client.login(process.env.TOKEN);
+let testingVariable = ':D';
 
 client.once('ready', async ()=> {
 	console.log('Ready!');
@@ -20,10 +21,17 @@ client.once('ready', async ()=> {
 });
 
 client.on('message', async (message) => {
+	if(message.author.id === '798264783668510770'){
+		return;
+	}
 	const prediction = await Prediction.getPrediction(message.member);
 	await prediction.addPrediction(message.content);
 	if(message.content === '$test') {
-		await message.channel.send('I\'m online! :D');
+		await message.channel.send('I\'m online ' + testingVariable);
+	}else if(message.content.startsWith('$frown')) {
+		if(message.member.id === '311715723489705986'){
+			testingVariable = ':P';
+		}
 	}else if(message.content === '$predict') {
 		try{
 			const predictStr = await prediction.predict();
