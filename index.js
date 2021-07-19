@@ -361,7 +361,9 @@ WHERE ${Prediction.USER_ID_DB} = $1 AND ${Prediction.GUILD_ID_DB} = $2`;
 		const channels = this.guildMember.guild.channels.cache;
 		for(const channel of channels){
 			await mapChannelMessages(channel[0], (message) => {
-				this.addPrediction(message.content);
+				if(message.author.id === this.guildMember.id){
+					this.addPrediction(message.content);
+				};
 			});
 		}
 		await this.updateDB();
