@@ -23,7 +23,7 @@ client.on('message', async (message) => {
 	const prediction = await Prediction.getPrediction(message.member);
 	await prediction.addPrediction(message.content);
 	if(message.content === '$test') {
-		console.log('');
+		await message.channel.send('I\'m online! :D');
 	}else if(message.content === '$predict') {
 		try{
 			const predictStr = await prediction.predict();
