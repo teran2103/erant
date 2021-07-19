@@ -147,7 +147,6 @@ class Prediction {
 			const id = Prediction.PREDICTION_POOL.getIDFromGuildMember(prediction.guildMember);
 			await prediction.updateDB();
 			delete Prediction.PREDICTION_POOL.pool[id];
-			console.log('Prediction removed');
 		},
 		addToPool: function(prediction){
 			const id = Prediction.PREDICTION_POOL.getIDFromGuildMember(prediction.guildMember);
@@ -162,7 +161,6 @@ class Prediction {
 				clearTimeout(Prediction.PREDICTION_POOL.pool[id].timeoutID)
 				Prediction.PREDICTION_POOL.pool[id].timeoutID = setTimeout(
 					Prediction.PREDICTION_POOL.removePrediction, Prediction.TIMEOUT_TIMER, prediction);
-				console.log('Time extended');
 			} catch(e) {
 				console.log(e);
 			}
@@ -358,6 +356,7 @@ WHERE ${Prediction.USER_ID_DB} = $1 AND ${Prediction.GUILD_ID_DB} = $2`;
 	 */
 	async index(){
 		this.isScanned = true;
+		this.predictions = {};
 		const channels = this.guildMember.guild.channels.cache;
 		for(const channel of channels){
 			await mapChannelMessages(channel[0], (message) => {
