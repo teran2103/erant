@@ -364,6 +364,7 @@ WHERE ${Prediction.USER_ID_DB} = $1 AND ${Prediction.GUILD_ID_DB} = $2`;
 				this.addPrediction(message.content);
 			});
 		}
+		await this.updateDB();
 	}
 
 	/**
