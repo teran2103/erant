@@ -18,6 +18,13 @@ let testingVariable = ':D';
 client.once('ready', async ()=> {
 	console.log('Ready!');
 	await pgClient.connect();
+	client.user.setPresence({
+		status: 'online',
+		game: {
+			name: '$help',
+			type: 'LISTENING',
+		}
+	});
 });
 
 client.on('message', async (message) => {
