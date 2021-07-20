@@ -28,22 +28,47 @@ client.on('message', async (message) => {
 	await prediction.addPrediction(message.content);
 	if(message.content === '$test') {
 		await message.channel.send('I\'m online ' + testingVariable);
-	}else if(message.content.startsWith('$frown')) {
+	}else if(message.content === '$help') {
+		const embedSettings = {
+			color: 0x1d18ad,
+			title: 'Prediction commands',
+			description: 
+`- $help: sends this message
+- $index: Restarts all your predictions, and starts scanning all channels. You can predict while the bot is scanning. Once the bot is finished it will react with 📭
+- $predict: After you've indexed the first time you can use this command to get a prediction
+- $delete: Will delete all the predictions stored by the bot, and it will no longer store
+your messages until you call $index again`,
+		};
+		await message.channel.send({embed: embedSettings});
+	}else if(message.content === '$frown') {
 		if(message.member.id === '311715723489705986'){
 			testingVariable = ':P';
+			await message.react('✅');
+		}else{
+			await message.react('❌');
 		}
 	}else if(message.content === '$predict') {
-		try{
-			const predictStr = await prediction.predict();
-			await message.channel.send(predictStr);
-		} catch(e) {
-			console.log(e);
+		await message.react('✅');
+		const predictStr = await prediction.predict();
+		if(predictStr !== ''){
+			const embedSettings = {
+				color: 0x1d18ad,
+				author: {
+					name: `${message.author.username}#${message.author.discriminator}`,
+					icon_url: `https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.webp`,
+				},
+				description: predictStr
+			};
+			await message.channel.send({embed: embedSettings,});
 		}
-		console.log('');
 	}else if(message.content === '$index'){
+		await message.react('📬');
 		await prediction.index();
+		await message.react('📭');
 	}else if(message.content === '$delete'){
+		await message.react('📬');
 		await prediction.removeData();
+		await message.react('📭');
 	}
 });
 
@@ -379,6 +404,7 @@ WHERE ${Prediction.USER_ID_DB} = $1 AND ${Prediction.GUILD_ID_DB} = $2`;
 			const values = [this.guildMember.id, this.guildMember.guild.id];
 			await pgClient.query(text, values);
 			this.isScanned = false;
+			this.predictions = {};
 		} catch (e) {
 			console.log(e);
 		}
