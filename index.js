@@ -2,6 +2,7 @@
 const dotenv = require('dotenv');
 const Discord = require('discord.js');
 const PG = new require('pg');
+const fs = new require('fs');
 
 dotenv.config();
 const client = new Discord.Client({ partials: ['MESSAGE'] });
@@ -13,7 +14,7 @@ const pgClient = new PG.Client({
 });
 
 client.login(process.env.TOKEN);
-let testingVariable = ':D';
+
 
 client.once('ready', async ()=> {
 	console.log('Ready!');
@@ -28,7 +29,16 @@ client.on('message', async (message) => {
 	const prediction = await Prediction.getPrediction(message.member);
 	await prediction.addPrediction(message.content);
 	if(message.content === '$test') {
-		await message.channel.send('I\'m online ' + testingVariable);
+		let testMessage;
+		fs.readFile('./greeting.txt', 'utf8', (err, data) => {
+			if(err){
+				console.log(err);
+				return;
+			}else{
+				message.channel.send(data);
+			}
+		});
+		// fs.writeFile('/greeting.txt', 'I\'m online :D', (e) => {console.log(e);});
 	}else if(message.content === '$help') {
 		const embedSettings = {
 			color: 0x1d18ad,
@@ -43,10 +53,13 @@ your messages until you call $index again`,
 		await message.channel.send({embed: embedSettings});
 	}else if(message.content === '$frown') {
 		if(message.member.id === '311715723489705986'){
-			testingVariable = ':P';
 			await message.react('✅');
-		}else{
-			await message.react('❌');
+			fs.writeFile('./greeting.txt', 'I\'m online >:D', (err) => {
+				if(err){
+					console.log(err);
+					return;
+				}
+			});
 		}
 	}else if(message.content === '$predict') {
 		await message.react('✅');
